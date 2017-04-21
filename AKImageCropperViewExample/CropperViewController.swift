@@ -58,13 +58,13 @@ final class CropperViewController: UIViewController {
 //        cropView.setCropRectAnin(CGRect(x: 50, y: 200, width: 100, height: 100))
         
         
-        /*
-         let randomWidth = max(UInt32(cropView.configuration.cropRect.minimumSize.width), arc4random_uniform(UInt32(cropView.scrollView.frame.size.width)))
-         let randomHeight = max(UInt32(cropView.configuration.cropRect.minimumSize.height), arc4random_uniform(UInt32(cropView.scrollView.frame.size.height)))
-         let offsetX = CGFloat(arc4random_uniform(UInt32(cropView.scrollView.frame.size.width) - randomWidth))
-         let offsetY = CGFloat(arc4random_uniform(UInt32(cropView.scrollView.frame.size.height) - randomHeight))
-         
-         cropView.cropRect(CGRectMake(offsetX, offsetY, CGFloat(randomWidth), CGFloat(randomHeight)))*/
+        
+//         let randomWidth = max(UInt32(cropView.configuration.cropRect.minimumSize.width), arc4random_uniform(UInt32(cropView.scrollView.frame.size.width)))
+//         let randomHeight = max(UInt32(cropView.configuration.cropRect.minimumSize.height), arc4random_uniform(UInt32(cropView.scrollView.frame.size.height)))
+//         let offsetX = CGFloat(arc4random_uniform(UInt32(cropView.scrollView.frame.size.width) - randomWidth))
+//         let offsetY = CGFloat(arc4random_uniform(UInt32(cropView.scrollView.frame.size.height) - randomHeight))
+//         
+//         cropView.cropRect(CGRectMake(offsetX, offsetY, CGFloat(randomWidth), CGFloat(randomHeight)))
     }
     
     @IBAction func randomImageAction(_ sender: AnyObject) {
@@ -86,18 +86,23 @@ final class CropperViewController: UIViewController {
     
     @IBAction func showHideOverlayAction(_ sender: AnyObject) {
         
-        if cropView.isoverlayViewActive {
+        
+        
+        if cropView.isOverlayViewActive {
             
             cropView.hideOverlayView(animationDuration: 0.3)
             
             UIView.animate(withDuration: 0.3, delay: 0, options: UIViewAnimationOptions.curveLinear, animations: {
                 self.overlayActionView.alpha = 0
+//                cropView.cropRect
                 
             }, completion: nil)
             
         } else {
             
-            cropView.showOverlayView(animationDuration: 0.3)
+            
+            cropView.showOverlayView(animationDuration: 0.3, cropRatio: 1.5)
+            
             
             UIView.animate(withDuration: 0.3, delay: 0.3, options: UIViewAnimationOptions.curveLinear, animations: {
                 self.overlayActionView.alpha = 1

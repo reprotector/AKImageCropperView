@@ -344,6 +344,7 @@ open class AKImageCropperView: UIView, UIScrollViewDelegate, UIGestureRecognizer
     }
     
     func layoutSubviews(byImage: Bool) {
+        print("layoutSubviews")
         
         rotateView.frame = CGRect(origin: .zero, size: self.frame.size)
         
@@ -408,8 +409,33 @@ open class AKImageCropperView: UIView, UIScrollViewDelegate, UIGestureRecognizer
         scrollView.frame = frame
         
         overlayView?.frame = frame
+        print("scrollView.visibleRect")
+        print(scrollView.visibleRect)
         overlayView?.cropRect = scrollView.visibleRect
         overlayView?.layoutSubviews()
+        print("scrollView.zoomScale")
+        print(scrollView.zoomScale)
+    }
+    
+    open func setRatio(ratio: CGFloat){
+        var cropRect: CGRect?
+        
+        if (ratio > 1) { //Width is bigger than height
+            let height = scrollView.visibleRect.size.width / ratio
+            
+            
+            
+            let originY = scrollView.visibleRect.origin.y + (scrollView.visibleRect.size.height-height)/2
+            cropRect = CGRect(x: scrollView.visibleRect.origin.x, y: originY, width: scrollView.visibleRect.size.width, height: height)
+//            scrollView.zoomScale = 
+            
+        }
+        
+        overlayView?.cropRect = cropRect!
+        overlayView?.layoutSubviews()
+        self.cropperOverlayViewDidChangeCropRect(overlayView!, cropRect!)
+        
+
     }
 
     // MARK: -
@@ -427,12 +453,11 @@ open class AKImageCropperView: UIView, UIScrollViewDelegate, UIGestureRecognizer
      - Parameter completion: A block object to be executed when the animation sequence ends. This block has no return value and takes a single Boolean argument that indicates whether or not the animations actually finished before the completion handler was called. If the duration of the animation is 0, this block is performed at the beginning of the next run loop cycle. This parameter may be NULL.
      */
     
-    open func showOverlayView(animationDuration duration: TimeInterval = 0, options: UIViewAnimationOptions = .curveEaseInOut, completion: ((Bool) -> Void)? = nil) {
+    open func showOverlayView(animationDuration duration: TimeInterval = 0, cropRatio: CGFloat, options: UIViewAnimationOptions = .curveEaseInOut, completion: ((Bool) -> Void)? = nil) {
         
         guard let image = image, let overlayView = overlayView, !isOverlayViewActive && !isAnimation else {
             return
         }
-        
         minEdgeInsets = overlayView.configuraiton.cropRectInsets
         savedProperty.save(scrollView: scrollView)
         cancelZoomingTimer()
@@ -440,6 +465,7 @@ open class AKImageCropperView: UIView, UIScrollViewDelegate, UIGestureRecognizer
         let _animations: () -> Void = { _ in
             
             self.layoutSubviews()
+            self.setRatio(ratio: cropRatio)
             
             // Update scroll view content offsets using active zooming scale and insets.
             
@@ -450,6 +476,8 @@ open class AKImageCropperView: UIView, UIScrollViewDelegate, UIGestureRecognizer
             
             // Update zoom relative to crop rext
             
+
+            print(overlayView.cropRect.size)
             let fillScaleMultiplier = ic_CGSizeFillScaleMultiplier(image.size, relativeToSize: overlayView.cropRect.size)
             
             self.scrollView.maximumZoomScale = fillScaleMultiplier * 1000
@@ -459,6 +487,7 @@ open class AKImageCropperView: UIView, UIScrollViewDelegate, UIGestureRecognizer
             
             self.isAnimation = false
             self.isOverlayViewActive = true
+            
             
             completion?(isFinished)
         }

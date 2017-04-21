@@ -312,6 +312,7 @@ open class AKImageCropperOverlayView: UIView {
     //  MARK: - Life cycle
     
     override open func layoutSubviews() {
+        print("layoutSubviews")
         super.layoutSubviews()
         
         overlayView.frame = frame
@@ -845,6 +846,7 @@ open class AKImageCropperOverlayView: UIView {
     }
     
     override open func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        print("touchesMoved")
   
         guard let touch = touches.first else { return }
 
@@ -860,9 +862,15 @@ open class AKImageCropperOverlayView: UIView {
         let cropRectMaxFrame = cropperView.reversedFrameWithInsets
         
         if activeCropAreaPart.contains(.topEdge) {
+            print("Top Edget")
+            
+            if activeCropAreaPart.contains(.leftEdge) {
+                cropRect.origin.x += translationPoint.x
+            }
             
             cropRect.origin.y += translationPoint.y
             cropRect.size.height -= translationPoint.y
+            cropRect.size.width -= translationPoint.y
             
             let pointInEdge = touchesBegan.touch.y - touchesBegan.cropRect.minY
             let minStickPoint = pointInEdge + cropRectMaxFrame.minY
@@ -877,28 +885,36 @@ open class AKImageCropperOverlayView: UIView {
                 cropRect.origin.y = cropRectMaxFrame.minY
                 cropRect.size.height = touchesBegan.cropRect.maxY - cropRectMaxFrame.minY
             }
-        }
+        } else
         
-        if activeCropAreaPart.contains(.rightEdge) {
-            
-            cropRect.size.width += translationPoint.x
-            
-            let pointInEdge = touchesBegan.touch.x - touchesBegan.cropRect.maxX
-            let minStickPoint = pointInEdge + touchesBegan.cropRect.minX + configuraiton.minCropRectSize.width
-            let maxStickPoint = pointInEdge + cropRectMaxFrame.maxX
-            
-            if  point.x > maxStickPoint {
-                cropRect.size.width =  cropRectMaxFrame.maxX - cropRect.origin.x
-            }
-            
-            if point.x < minStickPoint || cropRect.width < configuraiton.minCropRectSize.width {
-                cropRect.size.width = configuraiton.minCropRectSize.width
-            }
-        }
+//        if activeCropAreaPart.contains(.rightEdge) {
+//            print("Right Edge")
+//            
+//            cropRect.size.width += translationPoint.x
+//            cropRect.size.height += translationPoint.x
+//            
+//            let pointInEdge = touchesBegan.touch.x - touchesBegan.cropRect.maxX
+//            let minStickPoint = pointInEdge + touchesBegan.cropRect.minX + configuraiton.minCropRectSize.width
+//            let maxStickPoint = pointInEdge + cropRectMaxFrame.maxX
+//            
+//            if  point.x > maxStickPoint {
+//                cropRect.size.width =  cropRectMaxFrame.maxX - cropRect.origin.x
+//            }
+//            
+//            if point.x < minStickPoint || cropRect.width < configuraiton.minCropRectSize.width {
+//                cropRect.size.width = configuraiton.minCropRectSize.width
+//            }
+//        } else
         
         if activeCropAreaPart.contains(.bottomEdge) {
-
+            print("Bottom Edge")
+            
+            if activeCropAreaPart.contains(.leftEdge) {
+                cropRect.origin.x += translationPoint.x
+            }
+            
             cropRect.size.height += translationPoint.y
+            cropRect.size.width += translationPoint.y
             
             let pointInEdge = touchesBegan.touch.y - touchesBegan.cropRect.maxY
             let minStickPoint = pointInEdge + touchesBegan.cropRect.minY + configuraiton.minCropRectSize.height
@@ -912,26 +928,30 @@ open class AKImageCropperOverlayView: UIView {
                 cropRect.size.height = configuraiton.minCropRectSize.height
             }
         }
+//        } else
         
-        if activeCropAreaPart.contains(.leftEdge) {
-            
-            cropRect.origin.x += translationPoint.x
-            cropRect.size.width -= translationPoint.x
-            
-            let pointInEdge = touchesBegan.touch.x - touchesBegan.cropRect.minX
-            let minStickPoint = pointInEdge + cropRectMaxFrame.minX
-            let maxStickPoint = pointInEdge + touchesBegan.cropRect.maxX - configuraiton.minCropRectSize.width
-            
-            if  point.x > maxStickPoint || cropRect.width < configuraiton.minCropRectSize.width {
-                cropRect.origin.x = touchesBegan.cropRect.maxX - configuraiton.minCropRectSize.width
-                cropRect.size.width = configuraiton.minCropRectSize.width
-            }
-            
-            if point.x < minStickPoint {
-                cropRect.origin.x = cropRectMaxFrame.minX
-                cropRect.size.width = touchesBegan.cropRect.maxX - cropRectMaxFrame.minX
-            }
-        }
+//        if activeCropAreaPart.contains(.leftEdge) {
+//            
+//            print("Left Edge")
+//            
+//            cropRect.origin.x += translationPoint.x
+//            cropRect.size.width -= translationPoint.x
+//            cropRect.size.height -= translationPoint.x
+//            
+//            let pointInEdge = touchesBegan.touch.x - touchesBegan.cropRect.minX
+//            let minStickPoint = pointInEdge + cropRectMaxFrame.minX
+//            let maxStickPoint = pointInEdge + touchesBegan.cropRect.maxX - configuraiton.minCropRectSize.width
+//            
+//            if  point.x > maxStickPoint || cropRect.width < configuraiton.minCropRectSize.width {
+//                cropRect.origin.x = touchesBegan.cropRect.maxX - configuraiton.minCropRectSize.width
+//                cropRect.size.width = configuraiton.minCropRectSize.width
+//            }
+//            
+//            if point.x < minStickPoint {
+//                cropRect.origin.x = cropRectMaxFrame.minX
+//                cropRect.size.width = touchesBegan.cropRect.maxX - cropRectMaxFrame.minX
+//            }
+//        }
 
         /* Update UI for the crop rectange */
         
